@@ -1,4 +1,4 @@
-import { TaskModel } from "@/graphql/models/taks-model";
+import { TaskModel } from "@/graphql/models/task-model";
 
 export async function getAllTodos() {
   try {

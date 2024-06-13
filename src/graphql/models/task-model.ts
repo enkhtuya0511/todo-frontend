@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const taskSchema = new mongoose.Schema({
-  _id: String,
+  // _id: String,
   userId: String,
   subject: String,
   status: {

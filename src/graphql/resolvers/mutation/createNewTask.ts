@@ -1,18 +1,18 @@
-import { TaskModel } from "@/graphql/models/taks-model";
+import { NewTaskInput } from "@/graphql/generated/client";
+import { TaskModel } from "@/graphql/models/task-model";
 
-export async function createNewTask(parent: any, { newTask }: any) {
+export async function createNewTask(
+  parent: any,
+  { input }: { input: NewTaskInput }
+) {
   try {
-    const { userId, subject, status, task, priority } = newTask;
     const newTodo = await TaskModel.create({
-      userId,
-      subject,
-      status,
-      task,
-      priority,
+      ...input,
     });
 
     return newTodo;
   } catch (err) {
+    console.error("error creating task: ", err);
     return err;
   }
 }
