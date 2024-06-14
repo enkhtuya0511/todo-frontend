@@ -1,0 +1,52 @@
+query GetTodo($taskId: String) {
+  getTodo(taskId: $taskId) {
+    _id
+    priority
+    status
+    subject
+    task
+    userId
+  }
+}
+
+query GetAllTodos {
+  getAllTodos {
+    _id
+    priority
+    status
+    subject
+    task
+    userId
+  }
+}
+
+mutation UpdateTask($updateTaskInput: updateTaskInput!) {
+  updateTask(input: $updateTaskInput) {
+    _id
+    priority
+    status
+    task
+    subject
+  }
+}
+
+mutation DeleteTask($deleteTaskTaskId2: String) {
+  deleteTask(taskId: $deleteTaskTaskId2) {
+    _id
+    priority
+    status
+    subject
+    task
+    userId
+  }
+}
+
+mutation CreateNewTask($input: newTaskInput!) {
+  createNewTask(input: $input) {
+    priority
+    status
+    subject
+    task
+    userId
+  }
+}
