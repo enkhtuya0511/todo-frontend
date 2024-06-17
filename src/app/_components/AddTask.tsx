@@ -11,45 +11,49 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTodo } from "../_contexts/TodoContext";
-import { TaskType } from "@/lib/types";
-import { InputType } from "@/lib/types";
+import { NewTaskInput, useCreateNewTaskMutation } from "@/generated";
 
 const AddTask = () => {
-  const { todos, setTodos, userId } = useTodo();
+  const [createNewTaskMutation, { loading }] = useCreateNewTaskMutation();
+  const { userId } = useTodo();
+  // const [input, setInput] = React.useState({} as NewTaskInput);
+  const [input, setInput] = React.useState<NewTaskInput>({
+    task: "",
+    subject: "",
+    priority: "",
+    userId,
+  });
   const [show, setShow] = React.useState<boolean>(false);
-  const [input, setInput] = React.useState({} as InputType);
+  const [category, setCategory] = React.useState<string>("");
   const [categories, setCategories] = React.useState([
     "CS",
     "History",
     "Chinese",
   ]);
-  const Category = ["CS", "History", "Chinese"];
-  const [category, setCategory] = React.useState<string>("");
+  const priority = [
+    "urgent and important",
+    "important but not urgent",
+    "urgent but not important",
+    "neither urgent nor important",
+  ];
 
   const handleInput = async () => {
     try {
-      const newTask: InputType = {
+      const newTask: NewTaskInput = {
         task: input.task,
         subject: input.subject,
         priority: input.priority,
-        userId,
+        userId: "6666b52b6db8149d6f472115",
       };
+      console.log("newTask", newTask);
 
-      // const response = await fetch(`http://localhost:7001/todo/create/api`, {
-      //   method: "POST",
-      //   mode: "no-cors",
-      //   headers: {
-      //     "Content-type": "application/json",
-      //   },
-      //   body: JSON.stringify(newTask),
-      // });
-
-      // console.log("res", response, userId);
-      // if (response.status == 0) {
-      setTodos([...todos, { ...newTask, status: "pending" } as TaskType]);
-      setInput({ task: "", subject: "", priority: "", userId });
-      console.log("hhhe");
-      // }
+      const { data } = await createNewTaskMutation({
+        variables: { input: newTask },
+      });
+      if (!loading) {
+        setInput({ task: "", subject: "", priority: "", userId });
+        console.log("after create: ", data);
+      }
     } catch (err) {
       console.log("err", err);
     }
@@ -61,9 +65,11 @@ const AddTask = () => {
     setShow(false);
     setCategory("");
   };
+
   return (
-    <div className="flex items-center py-4 gap-[10px] mb-[20px]">
+    <form className="flex items-center py-4 gap-[10px] mb-[20px]">
       <Input
+        defaultValue={input?.task as string}
         placeholder="Add Task..."
         onChange={(e) =>
           setInput((prev) => ({ ...prev, task: e.target.value }))
@@ -77,10 +83,10 @@ const AddTask = () => {
           <SelectValue placeholder="Category" />
         </SelectTrigger>
         <SelectContent>
-          {categories.map((item, id) => (
-            <div key={id}>
-              <SelectItem value={item}>{item}</SelectItem>
-            </div>
+          {categories.map((item, idx) => (
+            <SelectItem key={idx} value={item}>
+              {item}
+            </SelectItem>
           ))}
           {show ? (
             <div className="flex gap-[5px]">
@@ -104,22 +110,16 @@ const AddTask = () => {
           <SelectValue placeholder="by Priority" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="urgent and important">
-            urgent and important
-          </SelectItem>
-          <SelectItem value="important but not urgent">
-            important but not urgent
-          </SelectItem>
-          <SelectItem value="urgent but not important">
-            urgent but not important
-          </SelectItem>
-          <SelectItem value="neither urgent nor important">
-            neither urgent nor important
-          </SelectItem>
+          {priority.map((el, idx) => (
+            <SelectItem key={idx} value={el}>
+              {el}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
-      <Button onClick={handleInput}>Add</Button>
-    </div>
+      {/* <Button onClick={handleInput}>Add</Button> */}
+      <Input type="reset" onClick={handleInput} value="Add" />
+    </form>
   );
 };
 

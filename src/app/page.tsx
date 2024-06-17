@@ -19,7 +19,7 @@ import { useGetAllTodosQuery } from "@/generated";
 export default function Home() {
   const { data, loading, error } = useGetAllTodosQuery();
 
-  console.log("data", data);
+  console.log("data/home/", data);
   if (loading) return <div>loading...</div>;
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">

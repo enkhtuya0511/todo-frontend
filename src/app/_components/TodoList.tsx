@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Task from "./Task";
+import Todo from "./Todo";
 
 const TodoList = () => {
   return (
@@ -26,12 +26,10 @@ const TodoList = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        <Task />
+        <Todo />
       </TableBody>
     </Table>
   );
 };
 
 export default TodoList;
-
-//<TableHead className="text-left">Actions</TableHead>
