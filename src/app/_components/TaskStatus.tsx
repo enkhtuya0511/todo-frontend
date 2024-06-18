@@ -1,18 +1,19 @@
 import React from "react";
 import { TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { useUpdateTaskMutation } from "@/generated";
+import { useUpdateTaskMutation, useGetAllTodosQuery } from "@/generated";
 
 type Props = { taskStatus: string; taskId: string };
 
 const TaskStatus = (props: Props) => {
-  const [updateTaskMutation, { loading }] = useUpdateTaskMutation();
+  const { refetch } = useGetAllTodosQuery();
+  const [updateTaskMutation] = useUpdateTaskMutation();
   const handleDone = async (id: string) => {
     try {
-      const { data } = await updateTaskMutation({
+      await updateTaskMutation({
         variables: { updateTaskInput: { _id: id, status: "success" } },
       });
-      if (!loading) console.log("after status change: ", data);
+      refetch();
     } catch (error) {
       console.error("Error during changing status: ", error);
     }

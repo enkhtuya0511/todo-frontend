@@ -43,10 +43,43 @@ mutation DeleteTask($deleteTaskTaskId2: String) {
 
 mutation CreateNewTask($input: newTaskInput!) {
   createNewTask(input: $input) {
+    _id
     priority
     status
     subject
     task
     userId
+  }
+}
+
+mutation CreateNewUser($input: newUserInput!) {
+  signupUser(input: $input) {
+    username
+    email
+    password
+  }
+}
+
+query getUserQuery($userId: String) {
+  getUser(userId: $userId) {
+    _id
+    username
+    email
+    password
+  }
+}
+
+mutation LoginUser($input: loginInput!) {
+  loginUser(input: $input) {
+    token
+  }
+}
+
+query GetAllUsers {
+  getAllUsers {
+    _id
+    username
+    email
+    password
   }
 }

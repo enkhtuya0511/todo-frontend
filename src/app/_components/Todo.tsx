@@ -20,9 +20,10 @@ const Todo = () => {
   const { data, loading, error } = useGetAllTodosQuery();
   const [editId, setEditId] = useState<string>("");
   const [input, setInput] = useState({} as UpdateTaskInput);
+
   return (
     <>
-      {data?.getAllTodos.map((item, id) => (
+      {data?.getAllTodos?.map((item, id) => (
         <TableRow
           key={id}
           className={`${item?.status === "success" && "line-through"}`}

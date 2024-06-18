@@ -11,12 +11,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTodo } from "../_contexts/TodoContext";
-import { NewTaskInput, useCreateNewTaskMutation } from "@/generated";
+import {
+  NewTaskInput,
+  useCreateNewTaskMutation,
+  useGetAllTodosQuery,
+} from "@/generated";
 
 const AddTask = () => {
-  const [createNewTaskMutation, { loading }] = useCreateNewTaskMutation();
+  const [createNewTaskMutation] = useCreateNewTaskMutation();
+  const { refetch } = useGetAllTodosQuery();
   const { userId } = useTodo();
-  // const [input, setInput] = React.useState({} as NewTaskInput);
   const [input, setInput] = React.useState<NewTaskInput>({
     task: "",
     subject: "",
@@ -47,13 +51,11 @@ const AddTask = () => {
       };
       console.log("newTask", newTask);
 
-      const { data } = await createNewTaskMutation({
+      await createNewTaskMutation({
         variables: { input: newTask },
       });
-      if (!loading) {
-        setInput({ task: "", subject: "", priority: "", userId });
-        console.log("after create: ", data);
-      }
+      refetch();
+      setInput({ task: "", subject: "", priority: "", userId });
     } catch (err) {
       console.log("err", err);
     }
@@ -67,9 +69,9 @@ const AddTask = () => {
   };
 
   return (
-    <form className="flex items-center py-4 gap-[10px] mb-[20px]">
+    <div className="flex items-center py-4 gap-[10px] mb-[20px]">
       <Input
-        defaultValue={input?.task as string}
+        value={input?.task as string}
         placeholder="Add Task..."
         onChange={(e) =>
           setInput((prev) => ({ ...prev, task: e.target.value }))
@@ -77,6 +79,7 @@ const AddTask = () => {
         className="max-w-sm"
       />
       <Select
+        value={input?.subject as string}
         onValueChange={(val) => setInput((prev) => ({ ...prev, subject: val }))}
       >
         <SelectTrigger className="w-[180px]">
@@ -102,6 +105,7 @@ const AddTask = () => {
         </SelectContent>
       </Select>
       <Select
+        value={input?.priority as string}
         onValueChange={(val) =>
           setInput((prev) => ({ ...prev, priority: val }))
         }
@@ -117,9 +121,8 @@ const AddTask = () => {
           ))}
         </SelectContent>
       </Select>
-      {/* <Button onClick={handleInput}>Add</Button> */}
-      <Input type="reset" onClick={handleInput} value="Add" />
-    </form>
+      <Button onClick={handleInput}>Add</Button>
+    </div>
   );
 };
 

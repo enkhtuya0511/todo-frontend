@@ -1,16 +1,15 @@
 "use client";
 
 import React, { ReactNode, createContext, useContext, useState } from "react";
-import { Task } from "@/generated";
+import { useRouter } from "next/navigation";
 
 type Props = {
   children: ReactNode;
 };
 
 type TodoContextType = {
-  todos: Task[];
-  setTodos: (todos: Task[]) => void;
   userId: string;
+  // token: string;
 };
 
 const TodoContext = createContext({} as TodoContextType);
@@ -20,14 +19,30 @@ export function useTodo() {
 }
 
 const TodoProvider = (props: Props) => {
-  const [todos, setTodos] = useState<Task[]>([]);
+  const router = useRouter();
   const [userId, setUserId] = useState<string>("");
+  // const [token, setToken] = useState<string>("");
   const { children } = props;
 
+  const getToken = async () => {
+    if (window) {
+      const localToken = localStorage.getItem("ui");
+      if (localToken) {
+        // setToken(localToken);
+        try {
+          // const id = res.data?.decoded?.userId;
+          // setUserId(id);
+        } catch (err) {
+          console.log("error", err);
+        }
+      } else {
+        router.push("/login");
+      }
+    }
+  };
+
   return (
-    <TodoContext.Provider value={{ todos, setTodos, userId }}>
-      {children}
-    </TodoContext.Provider>
+    <TodoContext.Provider value={{ userId }}>{children}</TodoContext.Provider>
   );
 };
 

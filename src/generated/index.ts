@@ -23,6 +23,8 @@ export type Mutation = {
   __typename?: 'Mutation';
   createNewTask?: Maybe<Task>;
   deleteTask?: Maybe<Task>;
+  loginUser: AuthUser;
+  signupUser: User;
   updateTask?: Maybe<Task>;
 };
 
@@ -37,6 +39,16 @@ export type MutationDeleteTaskArgs = {
 };
 
 
+export type MutationLoginUserArgs = {
+  input: LoginInput;
+};
+
+
+export type MutationSignupUserArgs = {
+  input: NewUserInput;
+};
+
+
 export type MutationUpdateTaskArgs = {
   input: UpdateTaskInput;
 };
@@ -46,11 +58,27 @@ export type Query = {
   getAllTodos: Array<Maybe<Task>>;
   getAllUsers: Array<Maybe<User>>;
   getTodo: Task;
+  getUser: User;
 };
 
 
 export type QueryGetTodoArgs = {
   taskId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryGetUserArgs = {
+  userId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AuthUser = {
+  __typename?: 'authUser';
+  token?: Maybe<Scalars['String']['output']>;
+};
+
+export type LoginInput = {
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
 };
 
 export type NewTaskInput = {
@@ -59,6 +87,12 @@ export type NewTaskInput = {
   subject?: InputMaybe<Scalars['String']['input']>;
   task?: InputMaybe<Scalars['String']['input']>;
   userId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type NewUserInput = {
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  username?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Task = {
@@ -81,6 +115,7 @@ export type UpdateTaskInput = {
 
 export type User = {
   __typename?: 'user';
+  _id: Scalars['String']['output'];
   email: Scalars['String']['output'];
   password: Scalars['String']['output'];
   username?: Maybe<Scalars['String']['output']>;
@@ -117,7 +152,33 @@ export type CreateNewTaskMutationVariables = Exact<{
 }>;
 
 
-export type CreateNewTaskMutation = { __typename?: 'Mutation', createNewTask?: { __typename?: 'task', priority?: string | null, status?: string | null, subject: string, task: string, userId?: string | null } | null };
+export type CreateNewTaskMutation = { __typename?: 'Mutation', createNewTask?: { __typename?: 'task', _id: string, priority?: string | null, status?: string | null, subject: string, task: string, userId?: string | null } | null };
+
+export type CreateNewUserMutationVariables = Exact<{
+  input: NewUserInput;
+}>;
+
+
+export type CreateNewUserMutation = { __typename?: 'Mutation', signupUser: { __typename?: 'user', username?: string | null, email: string, password: string } };
+
+export type GetUserQueryQueryVariables = Exact<{
+  userId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GetUserQueryQuery = { __typename?: 'Query', getUser: { __typename?: 'user', _id: string, username?: string | null, email: string, password: string } };
+
+export type LoginUserMutationVariables = Exact<{
+  input: LoginInput;
+}>;
+
+
+export type LoginUserMutation = { __typename?: 'Mutation', loginUser: { __typename?: 'authUser', token?: string | null } };
+
+export type GetAllUsersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllUsersQuery = { __typename?: 'Query', getAllUsers: Array<{ __typename?: 'user', _id: string, username?: string | null, email: string, password: string } | null> };
 
 
 export const GetTodoDocument = gql`
@@ -339,6 +400,7 @@ export type DeleteTaskMutationOptions = Apollo.BaseMutationOptions<DeleteTaskMut
 export const CreateNewTaskDocument = gql`
     mutation CreateNewTask($input: newTaskInput!) {
   createNewTask(input: $input) {
+    _id
     priority
     status
     subject
@@ -386,3 +448,208 @@ export function useCreateNewTaskMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateNewTaskMutationHookResult = ReturnType<typeof useCreateNewTaskMutation>;
 export type CreateNewTaskMutationResult = Apollo.MutationResult<CreateNewTaskMutation>;
 export type CreateNewTaskMutationOptions = Apollo.BaseMutationOptions<CreateNewTaskMutation, CreateNewTaskMutationVariables>;
+export const CreateNewUserDocument = gql`
+    mutation CreateNewUser($input: newUserInput!) {
+  signupUser(input: $input) {
+    username
+    email
+    password
+  }
+}
+    `;
+export type CreateNewUserMutationFn = Apollo.MutationFunction<CreateNewUserMutation, CreateNewUserMutationVariables>;
+export type CreateNewUserProps<TChildProps = {}, TDataName extends string = 'mutate'> = {
+      [key in TDataName]: Apollo.MutationFunction<CreateNewUserMutation, CreateNewUserMutationVariables>
+    } & TChildProps;
+export function withCreateNewUser<TProps, TChildProps = {}, TDataName extends string = 'mutate'>(operationOptions?: ApolloReactHoc.OperationOption<
+  TProps,
+  CreateNewUserMutation,
+  CreateNewUserMutationVariables,
+  CreateNewUserProps<TChildProps, TDataName>>) {
+    return ApolloReactHoc.withMutation<TProps, CreateNewUserMutation, CreateNewUserMutationVariables, CreateNewUserProps<TChildProps, TDataName>>(CreateNewUserDocument, {
+      alias: 'createNewUser',
+      ...operationOptions
+    });
+};
+
+/**
+ * __useCreateNewUserMutation__
+ *
+ * To run a mutation, you first call `useCreateNewUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateNewUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createNewUserMutation, { data, loading, error }] = useCreateNewUserMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateNewUserMutation(baseOptions?: Apollo.MutationHookOptions<CreateNewUserMutation, CreateNewUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateNewUserMutation, CreateNewUserMutationVariables>(CreateNewUserDocument, options);
+      }
+export type CreateNewUserMutationHookResult = ReturnType<typeof useCreateNewUserMutation>;
+export type CreateNewUserMutationResult = Apollo.MutationResult<CreateNewUserMutation>;
+export type CreateNewUserMutationOptions = Apollo.BaseMutationOptions<CreateNewUserMutation, CreateNewUserMutationVariables>;
+export const GetUserQueryDocument = gql`
+    query getUserQuery($userId: String) {
+  getUser(userId: $userId) {
+    _id
+    username
+    email
+    password
+  }
+}
+    `;
+export type GetUserQueryProps<TChildProps = {}, TDataName extends string = 'data'> = {
+      [key in TDataName]: ApolloReactHoc.DataValue<GetUserQueryQuery, GetUserQueryQueryVariables>
+    } & TChildProps;
+export function withGetUserQuery<TProps, TChildProps = {}, TDataName extends string = 'data'>(operationOptions?: ApolloReactHoc.OperationOption<
+  TProps,
+  GetUserQueryQuery,
+  GetUserQueryQueryVariables,
+  GetUserQueryProps<TChildProps, TDataName>>) {
+    return ApolloReactHoc.withQuery<TProps, GetUserQueryQuery, GetUserQueryQueryVariables, GetUserQueryProps<TChildProps, TDataName>>(GetUserQueryDocument, {
+      alias: 'getUserQuery',
+      ...operationOptions
+    });
+};
+
+/**
+ * __useGetUserQueryQuery__
+ *
+ * To run a query within a React component, call `useGetUserQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserQueryQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useGetUserQueryQuery(baseOptions?: Apollo.QueryHookOptions<GetUserQueryQuery, GetUserQueryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserQueryQuery, GetUserQueryQueryVariables>(GetUserQueryDocument, options);
+      }
+export function useGetUserQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserQueryQuery, GetUserQueryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserQueryQuery, GetUserQueryQueryVariables>(GetUserQueryDocument, options);
+        }
+export function useGetUserQuerySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUserQueryQuery, GetUserQueryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetUserQueryQuery, GetUserQueryQueryVariables>(GetUserQueryDocument, options);
+        }
+export type GetUserQueryQueryHookResult = ReturnType<typeof useGetUserQueryQuery>;
+export type GetUserQueryLazyQueryHookResult = ReturnType<typeof useGetUserQueryLazyQuery>;
+export type GetUserQuerySuspenseQueryHookResult = ReturnType<typeof useGetUserQuerySuspenseQuery>;
+export type GetUserQueryQueryResult = Apollo.QueryResult<GetUserQueryQuery, GetUserQueryQueryVariables>;
+export const LoginUserDocument = gql`
+    mutation LoginUser($input: loginInput!) {
+  loginUser(input: $input) {
+    token
+  }
+}
+    `;
+export type LoginUserMutationFn = Apollo.MutationFunction<LoginUserMutation, LoginUserMutationVariables>;
+export type LoginUserProps<TChildProps = {}, TDataName extends string = 'mutate'> = {
+      [key in TDataName]: Apollo.MutationFunction<LoginUserMutation, LoginUserMutationVariables>
+    } & TChildProps;
+export function withLoginUser<TProps, TChildProps = {}, TDataName extends string = 'mutate'>(operationOptions?: ApolloReactHoc.OperationOption<
+  TProps,
+  LoginUserMutation,
+  LoginUserMutationVariables,
+  LoginUserProps<TChildProps, TDataName>>) {
+    return ApolloReactHoc.withMutation<TProps, LoginUserMutation, LoginUserMutationVariables, LoginUserProps<TChildProps, TDataName>>(LoginUserDocument, {
+      alias: 'loginUser',
+      ...operationOptions
+    });
+};
+
+/**
+ * __useLoginUserMutation__
+ *
+ * To run a mutation, you first call `useLoginUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [loginUserMutation, { data, loading, error }] = useLoginUserMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useLoginUserMutation(baseOptions?: Apollo.MutationHookOptions<LoginUserMutation, LoginUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LoginUserMutation, LoginUserMutationVariables>(LoginUserDocument, options);
+      }
+export type LoginUserMutationHookResult = ReturnType<typeof useLoginUserMutation>;
+export type LoginUserMutationResult = Apollo.MutationResult<LoginUserMutation>;
+export type LoginUserMutationOptions = Apollo.BaseMutationOptions<LoginUserMutation, LoginUserMutationVariables>;
+export const GetAllUsersDocument = gql`
+    query GetAllUsers {
+  getAllUsers {
+    _id
+    username
+    email
+    password
+  }
+}
+    `;
+export type GetAllUsersProps<TChildProps = {}, TDataName extends string = 'data'> = {
+      [key in TDataName]: ApolloReactHoc.DataValue<GetAllUsersQuery, GetAllUsersQueryVariables>
+    } & TChildProps;
+export function withGetAllUsers<TProps, TChildProps = {}, TDataName extends string = 'data'>(operationOptions?: ApolloReactHoc.OperationOption<
+  TProps,
+  GetAllUsersQuery,
+  GetAllUsersQueryVariables,
+  GetAllUsersProps<TChildProps, TDataName>>) {
+    return ApolloReactHoc.withQuery<TProps, GetAllUsersQuery, GetAllUsersQueryVariables, GetAllUsersProps<TChildProps, TDataName>>(GetAllUsersDocument, {
+      alias: 'getAllUsers',
+      ...operationOptions
+    });
+};
+
+/**
+ * __useGetAllUsersQuery__
+ *
+ * To run a query within a React component, call `useGetAllUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllUsersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllUsersQuery(baseOptions?: Apollo.QueryHookOptions<GetAllUsersQuery, GetAllUsersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllUsersQuery, GetAllUsersQueryVariables>(GetAllUsersDocument, options);
+      }
+export function useGetAllUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllUsersQuery, GetAllUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllUsersQuery, GetAllUsersQueryVariables>(GetAllUsersDocument, options);
+        }
+export function useGetAllUsersSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetAllUsersQuery, GetAllUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetAllUsersQuery, GetAllUsersQueryVariables>(GetAllUsersDocument, options);
+        }
+export type GetAllUsersQueryHookResult = ReturnType<typeof useGetAllUsersQuery>;
+export type GetAllUsersLazyQueryHookResult = ReturnType<typeof useGetAllUsersLazyQuery>;
+export type GetAllUsersSuspenseQueryHookResult = ReturnType<typeof useGetAllUsersSuspenseQuery>;
+export type GetAllUsersQueryResult = Apollo.QueryResult<GetAllUsersQuery, GetAllUsersQueryVariables>;
