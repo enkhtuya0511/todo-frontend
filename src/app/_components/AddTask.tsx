@@ -19,14 +19,14 @@ import {
 
 const AddTask = () => {
   const [createNewTaskMutation] = useCreateNewTaskMutation();
-  const { refetch } = useGetAllTodosQuery();
   const { userId } = useTodo();
   const [input, setInput] = React.useState<NewTaskInput>({
     task: "",
     subject: "",
     priority: "",
-    userId,
+    userId: userId,
   });
+  const { refetch } = useGetAllTodosQuery({ variables: { userId: userId } });
   const [show, setShow] = React.useState<boolean>(false);
   const [category, setCategory] = React.useState<string>("");
   const [categories, setCategories] = React.useState([
@@ -47,7 +47,7 @@ const AddTask = () => {
         task: input.task,
         subject: input.subject,
         priority: input.priority,
-        userId: "6666b52b6db8149d6f472115",
+        userId: userId,
       };
       console.log("newTask", newTask);
 
@@ -55,6 +55,7 @@ const AddTask = () => {
         variables: { input: newTask },
       });
       refetch();
+      console.log("first");
       setInput({ task: "", subject: "", priority: "", userId });
     } catch (err) {
       console.log("err", err);

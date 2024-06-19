@@ -14,9 +14,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LoginInput, useLoginUserMutation } from "@/generated";
+import { useTodo } from "@/app/_contexts/TodoContext";
 
 export default function LoginForm() {
   const router = useRouter();
+  const { setUserId } = useTodo();
   const [loginUserMutation, { loading }] = useLoginUserMutation();
   const [loginInput, setLoginInput] = useState({} as LoginInput);
   const handleLogin = async () => {
@@ -25,13 +27,14 @@ export default function LoginForm() {
       const { data } = await loginUserMutation({
         variables: { input: loginInput },
       });
-      if (!loading) {
+      if (data) {
         console.log("user: ", data);
-        localStorage.setItem("ui", data?.loginUser.token as string);
+        localStorage.setItem("ui", data?.loginUser._id as string);
+        setUserId(data?.loginUser._id as string);
         router.push("/");
       }
     } catch (err) {
-      console.log(err);
+      console.log("Error during Login", err);
     }
   };
   return (
@@ -61,18 +64,26 @@ export default function LoginForm() {
             <Input
               id="password"
               type="password"
+              placeholder="password"
               required
               onChange={(e) =>
                 setLoginInput((prev) => ({ ...prev, password: e.target.value }))
               }
             />
           </div>
-        </CardContent>
-        <CardFooter>
           <Button className="w-full" onClick={handleLogin}>
             Login
           </Button>
-        </CardFooter>
+          <div className="mt-4 text-center text-sm">
+            Need an account ?
+            <div
+              className="w-full underline"
+              onClick={() => router.push("/signup")}
+            >
+              Sign Up
+            </div>
+          </div>
+        </CardContent>
       </Card>
     </div>
   );

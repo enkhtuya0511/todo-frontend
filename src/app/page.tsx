@@ -15,12 +15,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { CircleUser, Package } from "lucide-react";
 import { useGetAllTodosQuery } from "@/generated";
+import { useTodo } from "./_contexts/TodoContext";
 
 export default function Home() {
-  const { data, loading, error } = useGetAllTodosQuery();
+  const { userId, setUserId } = useTodo();
+  const { data, loading, error } = useGetAllTodosQuery({
+    variables: { userId: userId },
+  });
 
   console.log("data/home/", data);
   if (loading) return <div>loading...</div>;
+  const handleLogout = () => {
+    localStorage.removeItem("ui");
+    setUserId("");
+    window.location.reload();
+  };
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -55,7 +64,9 @@ export default function Home() {
               <DropdownMenuSeparator />
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem>
+                <div onClick={handleLogout}>Logout</div>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </header>

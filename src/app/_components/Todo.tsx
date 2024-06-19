@@ -15,9 +15,13 @@ import DeleteTask from "./DeleteTask";
 import EditTask from "./EditTask";
 import UpdateTask from "./UpdateTask";
 import TaskStatus from "./TaskStatus";
+import { useTodo } from "../_contexts/TodoContext";
 
 const Todo = () => {
-  const { data, loading, error } = useGetAllTodosQuery();
+  const { userId } = useTodo();
+  const { data, loading, error } = useGetAllTodosQuery({
+    variables: { userId: userId },
+  });
   const [editId, setEditId] = useState<string>("");
   const [input, setInput] = useState({} as UpdateTaskInput);
 

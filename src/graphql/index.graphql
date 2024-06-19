@@ -9,14 +9,14 @@ query GetTodo($taskId: String) {
   }
 }
 
-query GetAllTodos {
-  getAllTodos {
+query GetAllTodos($userId: String) {
+  getAllTodos(userId: $userId) {
     _id
-    priority
-    status
-    subject
-    task
     userId
+    subject
+    status
+    task
+    priority
   }
 }
 
@@ -60,8 +60,8 @@ mutation CreateNewUser($input: newUserInput!) {
   }
 }
 
-query getUserQuery($userId: String) {
-  getUser(userId: $userId) {
+query getUser($token: String) {
+  getUser(token: $token) {
     _id
     username
     email
@@ -69,9 +69,18 @@ query getUserQuery($userId: String) {
   }
 }
 
+# mutation LoginUser($loginUserInput2: loginInput!) {
+#   loginUser(input: $loginUserInput2) {
+#     token
+#   }
+# }
+
 mutation LoginUser($input: loginInput!) {
   loginUser(input: $input) {
-    token
+    _id
+    username
+    email
+    password
   }
 }
 

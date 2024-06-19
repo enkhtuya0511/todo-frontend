@@ -2,11 +2,13 @@ import React from "react";
 import { TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useUpdateTaskMutation, useGetAllTodosQuery } from "@/generated";
+import { useTodo } from "../_contexts/TodoContext";
 
 type Props = { taskStatus: string; taskId: string };
 
 const TaskStatus = (props: Props) => {
-  const { refetch } = useGetAllTodosQuery();
+  const { userId } = useTodo();
+  const { refetch } = useGetAllTodosQuery({ variables: { userId: userId } });
   const [updateTaskMutation] = useUpdateTaskMutation();
   const handleDone = async (id: string) => {
     try {

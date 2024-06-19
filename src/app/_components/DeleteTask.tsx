@@ -2,12 +2,14 @@ import React from "react";
 import { TableCell } from "@/components/ui/table";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { useDeleteTaskMutation, useGetAllTodosQuery } from "@/generated";
+import { useTodo } from "../_contexts/TodoContext";
 
 type Props = { taskId: string };
 
 const DeleteTask = (props: Props) => {
+  const { userId } = useTodo();
   const [deleteTaskMutation] = useDeleteTaskMutation();
-  const { refetch } = useGetAllTodosQuery();
+  const { refetch } = useGetAllTodosQuery({ variables: { userId: userId } });
 
   const handleDelete = async (id: string) => {
     try {

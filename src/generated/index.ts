@@ -23,7 +23,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createNewTask?: Maybe<Task>;
   deleteTask?: Maybe<Task>;
-  loginUser: AuthUser;
+  loginUser: User;
   signupUser: User;
   updateTask?: Maybe<Task>;
 };
@@ -62,13 +62,18 @@ export type Query = {
 };
 
 
+export type QueryGetAllTodosArgs = {
+  userId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type QueryGetTodoArgs = {
   taskId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryGetUserArgs = {
-  userId?: InputMaybe<Scalars['String']['input']>;
+  token?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type AuthUser = {
@@ -128,10 +133,12 @@ export type GetTodoQueryVariables = Exact<{
 
 export type GetTodoQuery = { __typename?: 'Query', getTodo: { __typename?: 'task', _id: string, priority?: string | null, status?: string | null, subject: string, task: string, userId?: string | null } };
 
-export type GetAllTodosQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetAllTodosQueryVariables = Exact<{
+  userId?: InputMaybe<Scalars['String']['input']>;
+}>;
 
 
-export type GetAllTodosQuery = { __typename?: 'Query', getAllTodos: Array<{ __typename?: 'task', _id: string, priority?: string | null, status?: string | null, subject: string, task: string, userId?: string | null } | null> };
+export type GetAllTodosQuery = { __typename?: 'Query', getAllTodos: Array<{ __typename?: 'task', _id: string, userId?: string | null, subject: string, status?: string | null, task: string, priority?: string | null } | null> };
 
 export type UpdateTaskMutationVariables = Exact<{
   updateTaskInput: UpdateTaskInput;
@@ -161,19 +168,19 @@ export type CreateNewUserMutationVariables = Exact<{
 
 export type CreateNewUserMutation = { __typename?: 'Mutation', signupUser: { __typename?: 'user', username?: string | null, email: string, password: string } };
 
-export type GetUserQueryQueryVariables = Exact<{
-  userId?: InputMaybe<Scalars['String']['input']>;
+export type GetUserQueryVariables = Exact<{
+  token?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type GetUserQueryQuery = { __typename?: 'Query', getUser: { __typename?: 'user', _id: string, username?: string | null, email: string, password: string } };
+export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'user', _id: string, username?: string | null, email: string, password: string } };
 
 export type LoginUserMutationVariables = Exact<{
   input: LoginInput;
 }>;
 
 
-export type LoginUserMutation = { __typename?: 'Mutation', loginUser: { __typename?: 'authUser', token?: string | null } };
+export type LoginUserMutation = { __typename?: 'Mutation', loginUser: { __typename?: 'user', _id: string, username?: string | null, email: string, password: string } };
 
 export type GetAllUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -240,14 +247,14 @@ export type GetTodoLazyQueryHookResult = ReturnType<typeof useGetTodoLazyQuery>;
 export type GetTodoSuspenseQueryHookResult = ReturnType<typeof useGetTodoSuspenseQuery>;
 export type GetTodoQueryResult = Apollo.QueryResult<GetTodoQuery, GetTodoQueryVariables>;
 export const GetAllTodosDocument = gql`
-    query GetAllTodos {
-  getAllTodos {
+    query GetAllTodos($userId: String) {
+  getAllTodos(userId: $userId) {
     _id
-    priority
-    status
-    subject
-    task
     userId
+    subject
+    status
+    task
+    priority
   }
 }
     `;
@@ -277,6 +284,7 @@ export function withGetAllTodos<TProps, TChildProps = {}, TDataName extends stri
  * @example
  * const { data, loading, error } = useGetAllTodosQuery({
  *   variables: {
+ *      userId: // value for 'userId'
  *   },
  * });
  */
@@ -496,9 +504,9 @@ export function useCreateNewUserMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateNewUserMutationHookResult = ReturnType<typeof useCreateNewUserMutation>;
 export type CreateNewUserMutationResult = Apollo.MutationResult<CreateNewUserMutation>;
 export type CreateNewUserMutationOptions = Apollo.BaseMutationOptions<CreateNewUserMutation, CreateNewUserMutationVariables>;
-export const GetUserQueryDocument = gql`
-    query getUserQuery($userId: String) {
-  getUser(userId: $userId) {
+export const GetUserDocument = gql`
+    query getUser($token: String) {
+  getUser(token: $token) {
     _id
     username
     email
@@ -506,56 +514,59 @@ export const GetUserQueryDocument = gql`
   }
 }
     `;
-export type GetUserQueryProps<TChildProps = {}, TDataName extends string = 'data'> = {
-      [key in TDataName]: ApolloReactHoc.DataValue<GetUserQueryQuery, GetUserQueryQueryVariables>
+export type GetUserProps<TChildProps = {}, TDataName extends string = 'data'> = {
+      [key in TDataName]: ApolloReactHoc.DataValue<GetUserQuery, GetUserQueryVariables>
     } & TChildProps;
-export function withGetUserQuery<TProps, TChildProps = {}, TDataName extends string = 'data'>(operationOptions?: ApolloReactHoc.OperationOption<
+export function withGetUser<TProps, TChildProps = {}, TDataName extends string = 'data'>(operationOptions?: ApolloReactHoc.OperationOption<
   TProps,
-  GetUserQueryQuery,
-  GetUserQueryQueryVariables,
-  GetUserQueryProps<TChildProps, TDataName>>) {
-    return ApolloReactHoc.withQuery<TProps, GetUserQueryQuery, GetUserQueryQueryVariables, GetUserQueryProps<TChildProps, TDataName>>(GetUserQueryDocument, {
-      alias: 'getUserQuery',
+  GetUserQuery,
+  GetUserQueryVariables,
+  GetUserProps<TChildProps, TDataName>>) {
+    return ApolloReactHoc.withQuery<TProps, GetUserQuery, GetUserQueryVariables, GetUserProps<TChildProps, TDataName>>(GetUserDocument, {
+      alias: 'getUser',
       ...operationOptions
     });
 };
 
 /**
- * __useGetUserQueryQuery__
+ * __useGetUserQuery__
  *
- * To run a query within a React component, call `useGetUserQueryQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUserQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetUserQueryQuery({
+ * const { data, loading, error } = useGetUserQuery({
  *   variables: {
- *      userId: // value for 'userId'
+ *      token: // value for 'token'
  *   },
  * });
  */
-export function useGetUserQueryQuery(baseOptions?: Apollo.QueryHookOptions<GetUserQueryQuery, GetUserQueryQueryVariables>) {
+export function useGetUserQuery(baseOptions?: Apollo.QueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetUserQueryQuery, GetUserQueryQueryVariables>(GetUserQueryDocument, options);
+        return Apollo.useQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
       }
-export function useGetUserQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserQueryQuery, GetUserQueryQueryVariables>) {
+export function useGetUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetUserQueryQuery, GetUserQueryQueryVariables>(GetUserQueryDocument, options);
+          return Apollo.useLazyQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
         }
-export function useGetUserQuerySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUserQueryQuery, GetUserQueryQueryVariables>) {
+export function useGetUserSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetUserQueryQuery, GetUserQueryQueryVariables>(GetUserQueryDocument, options);
+          return Apollo.useSuspenseQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
         }
-export type GetUserQueryQueryHookResult = ReturnType<typeof useGetUserQueryQuery>;
-export type GetUserQueryLazyQueryHookResult = ReturnType<typeof useGetUserQueryLazyQuery>;
-export type GetUserQuerySuspenseQueryHookResult = ReturnType<typeof useGetUserQuerySuspenseQuery>;
-export type GetUserQueryQueryResult = Apollo.QueryResult<GetUserQueryQuery, GetUserQueryQueryVariables>;
+export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
+export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
+export type GetUserSuspenseQueryHookResult = ReturnType<typeof useGetUserSuspenseQuery>;
+export type GetUserQueryResult = Apollo.QueryResult<GetUserQuery, GetUserQueryVariables>;
 export const LoginUserDocument = gql`
     mutation LoginUser($input: loginInput!) {
   loginUser(input: $input) {
-    token
+    _id
+    username
+    email
+    password
   }
 }
     `;

@@ -6,6 +6,7 @@ import {
   UpdateTaskInput,
   useGetAllTodosQuery,
 } from "@/generated";
+import { useTodo } from "../_contexts/TodoContext";
 
 type Props = {
   input: UpdateTaskInput;
@@ -15,7 +16,8 @@ type Props = {
 };
 
 const UpdateTask = (props: Props) => {
-  const { refetch } = useGetAllTodosQuery();
+  const { userId } = useTodo();
+  const { refetch } = useGetAllTodosQuery({ variables: { userId: userId } });
   const [updateTaskMutation] = useUpdateTaskMutation();
   const handleSave = async (id: string) => {
     try {
