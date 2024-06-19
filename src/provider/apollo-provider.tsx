@@ -6,7 +6,8 @@ interface Props extends React.PropsWithChildren {}
 
 const ApolloProviders = ({ children }: Props) => {
   const client = new ApolloClient({
-    uri: "https://todo-graphql-psi.vercel.app/api/graphql",
+    // uri: "https://todo-graphql-psi.vercel.app/api/graphql",
+    uri: "https://todo-graphql-backend-one.vercel.app/api/graphql",
     cache: new InMemoryCache(),
   });
   return (

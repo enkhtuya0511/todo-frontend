@@ -1,5 +1,6 @@
 overwrite: true
-schema: "https://todo-graphql-psi.vercel.app/api/graphql/schema"
+# schema: "https://todo-graphql-psi.vercel.app/api/graphql/schema"
+schema: "https://todo-graphql-backend-one.vercel.app/api/graphql"
 
 documents: "./src/graphql/**/*.graphql"
 
