@@ -31,8 +31,8 @@ export default function LoginForm() {
         console.log("user: ", data);
         localStorage.setItem("ui", data?.loginUser._id as string);
         setUserId(data?.loginUser._id as string);
-        router.push("/");
       }
+      router.push("/");
     } catch (err) {
       console.log("Error during Login", err);
     }

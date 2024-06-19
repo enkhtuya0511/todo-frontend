@@ -29,20 +29,19 @@ const TodoProvider = (props: Props) => {
   const [userId, setUserId] = useState<string>("");
   const { children } = props;
 
-  const getUserId = async () => {
-    if (window) {
-      const ID = localStorage.getItem("ui");
-      console.log("ID", ID);
-      if (ID) {
-        setUserId(ID);
-        console.log("userId", userId);
-      } else {
-        router.push("/login");
-      }
-    }
-  };
-
   useEffect(() => {
+    const getUserId = () => {
+      if (window) {
+        const ID = localStorage.getItem("ui");
+        console.log("ID", ID);
+        if (ID) {
+          setUserId(ID);
+          console.log("userId", userId);
+        } else {
+          router.push("/login");
+        }
+      }
+    };
     getUserId();
   }, []);
 
