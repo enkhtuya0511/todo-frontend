@@ -26,6 +26,7 @@ export default function Home() {
   console.log("data/home/", data);
   if (loading) return <div>loading...</div>;
   const handleLogout = () => {
+    console.log("logout");
     localStorage.removeItem("ui");
     setUserId("");
     window.location.reload();
@@ -64,9 +65,7 @@ export default function Home() {
               <DropdownMenuSeparator />
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <div onClick={handleLogout}>Logout</div>
-              </DropdownMenuItem>
+              <div onClick={() => handleLogout()}>Logout</div>
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
