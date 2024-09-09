@@ -1,11 +1,7 @@
 import React from "react";
 import { TableCell } from "@/components/ui/table";
 import { FiSave } from "react-icons/fi";
-import {
-  useUpdateTaskMutation,
-  UpdateTaskInput,
-  useGetAllTodosQuery,
-} from "@/generated";
+import { useUpdateTaskMutation, UpdateTaskInput, useGetAllTodosQuery } from "@/generated";
 import { useTodo } from "../_contexts/TodoContext";
 
 type Props = {
@@ -21,10 +17,19 @@ const UpdateTask = (props: Props) => {
   const [updateTaskMutation] = useUpdateTaskMutation();
   const handleSave = async (id: string) => {
     try {
-      await updateTaskMutation({
-        variables: { updateTaskInput: { ...props.input, _id: id } },
-      });
-      refetch();
+      // if (props.input) {
+      //   await updateTaskMutation({
+      //     variables: { updateTaskInput: { ...props.input, _id: id } },
+      //   });
+      //   refetch();
+      // }
+      // Ensure input fields are not empty before updating
+      if (props.input.task?.trim() !== "" || props.input.subject?.trim() !== "") {
+        await updateTaskMutation({
+          variables: { updateTaskInput: { ...props.input, _id: id } },
+        });
+        await refetch();
+      }
       props.setEditId("");
       props.setInput({ task: "", subject: "", priority: "", _id: "" });
     } catch (error) {

@@ -1,16 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { UpdateTaskInput, useGetAllTodosQuery } from "@/generated";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import DeleteTask from "./DeleteTask";
 import EditTask from "./EditTask";
 import UpdateTask from "./UpdateTask";
@@ -19,19 +13,32 @@ import { useTodo } from "../_contexts/TodoContext";
 
 const Todo = () => {
   const { userId } = useTodo();
-  const { data, loading, error } = useGetAllTodosQuery({
+  const { data } = useGetAllTodosQuery({
     variables: { userId: userId },
   });
   const [editId, setEditId] = useState<string>("");
-  const [input, setInput] = useState({} as UpdateTaskInput);
+  const todo = data?.getAllTodos?.find((todo) => todo?._id === editId);
+  const [input, setInput] = useState<UpdateTaskInput>({
+    task: "",
+    subject: "",
+    priority: "",
+    _id: "",
+  });
 
+  useEffect(() => {
+    if (todo) {
+      setInput({
+        task: todo.task || "",
+        subject: todo.subject || "",
+        priority: todo.priority || "",
+        _id: todo._id || "",
+      });
+    }
+  }, [todo]);
   return (
     <>
       {data?.getAllTodos?.map((item, id) => (
-        <TableRow
-          key={id}
-          className={`${item?.status === "success" && "line-through"}`}
-        >
+        <TableRow key={id} className={`${item?.status === "success" && "line-through"}`}>
           {editId === item?._id ? (
             <>
               <TableCell className={`font-medium`}>
@@ -48,6 +55,7 @@ const Todo = () => {
               <TableCell>{item?.status}</TableCell>
               <TableCell>
                 <Select
+                  defaultValue={item?.subject}
                   onValueChange={(val) =>
                     setInput((prev) => ({
                       ...prev,
@@ -65,12 +73,7 @@ const Todo = () => {
                   </SelectContent>
                 </Select>
               </TableCell>
-              <UpdateTask
-                input={input}
-                setInput={setInput}
-                taskId={item?._id as string}
-                setEditId={setEditId}
-              />
+              <UpdateTask input={input} setInput={setInput} taskId={item?._id as string} setEditId={setEditId} />
             </>
           ) : (
             <>
@@ -81,10 +84,7 @@ const Todo = () => {
             </>
           )}
           <DeleteTask taskId={item?._id as string} />
-          <TaskStatus
-            taskId={item?._id as string}
-            taskStatus={item?.status as string}
-          />
+          <TaskStatus taskId={item?._id as string} taskStatus={item?.status as string} />
         </TableRow>
       ))}
     </>

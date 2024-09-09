@@ -1,12 +1,6 @@
 "use client";
 
-import React, {
-  ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { ReactNode, createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type Props = {
@@ -43,13 +37,9 @@ const TodoProvider = (props: Props) => {
       }
     };
     getUserId();
-  }, []);
+  }, [userId, router]);
 
-  return (
-    <TodoContext.Provider value={{ userId, setUserId }}>
-      {children}
-    </TodoContext.Provider>
-  );
+  return <TodoContext.Provider value={{ userId, setUserId }}>{children}</TodoContext.Provider>;
 };
 
 export default TodoProvider;
